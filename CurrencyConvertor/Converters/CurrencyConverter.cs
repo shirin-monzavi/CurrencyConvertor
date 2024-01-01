@@ -61,19 +61,15 @@ namespace CurrencyConvertor.Converters
 
         public double Convert(string fromCurrency, string toCurrency, double amount)
         {
-            var findRate = currencies.ContainsKey(new Tuple<string, string>(fromCurrency, toCurrency));
+            double value;
+            var findRate = currencies.TryGetValue(new Tuple<string, string>(fromCurrency, toCurrency),out value);
 
             if (findRate)
             {
-
+                return value * amount;
             }
 
-            if (findRate)
-            {
-
-            }
-
-            throw new ArgumentException("currency has not founded");
+            return 0;
         }
 
         public void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates)

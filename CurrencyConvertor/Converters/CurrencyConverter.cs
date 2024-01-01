@@ -65,28 +65,30 @@ namespace CurrencyConvertor.Converters
 
         public double Convert(string fromCurrency, string toCurrency, double amount)
         {
-            double value, rate;
+            double value;
 
-            var findRate = currencies
-                .TryGetValue(
-                    new Tuple<string, string>(fromCurrency, toCurrency),
-                    out value
-                );
+            if (findRate(fromCurrency, toCurrency, out value))
+                return calculator(amount, value, "*");
 
-            if (findRate)
-                return calculator(amount, value, "*", out rate);
+            if (findRate(toCurrency, fromCurrency, out value))
+                return calculator(amount, value, "/");
 
-            findRate = currencies
-                .TryGetValue(
-                    new Tuple<string, string>(toCurrency, fromCurrency),
-                    out value
-                );
+            foreach (var currency in currencies)
+            {
+                if (currency.Key.Item2 == toCurrency &&
+                    currencies.Any(c => c.Key.Item2 == currency.Key.Item2 && c.Key.Item2 == toCurrency))
+                {
+                    var findInDirectRate = findRate(currency.Key.Item1, fromCurrency, out value);
 
-            if (findRate)
-                return calculator(amount, value, "/", out rate);
+                    var newAmount = calculator(amount, value, "/");
+
+                    return calculator(newAmount, currency.Value, "*");
+                }
+            }
 
             return 0;
         }
+
 
         public void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates)
         {
@@ -105,8 +107,19 @@ namespace CurrencyConvertor.Converters
 
         #region Private Method
 
-        private double calculator(double amount, double value, string @operator, out double rate)
+        private bool findRate(string fromCurrency, string toCurrency, out double value)
         {
+            return currencies
+                .TryGetValue(
+                    new Tuple<string, string>(fromCurrency, toCurrency),
+                    out value
+                );
+        }
+
+        private double calculator(double amount, double value, string @operator)
+        {
+            double rate;
+
             if (@operator == "*")
             {
                 rate = multiply(amount, value);
@@ -130,6 +143,5 @@ namespace CurrencyConvertor.Converters
         private double divide(double amount, double value) =>
              amount / value;
         #endregion
-
     }
 }

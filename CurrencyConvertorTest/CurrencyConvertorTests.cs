@@ -6,24 +6,25 @@ namespace CurrencyConvertorTest
     public class CurrencyConvertorTests
     {
         private readonly CurrencyConverter sut;
+
         public CurrencyConvertorTests()
         {
              sut = CurrencyConverter.Instance;
         }
 
-
         [Theory]
-
         //Multiply
         [InlineData("USD", "CAD", 10, 13.4)]
         [InlineData("CAD", "GBP", 10, 5.8)]
         [InlineData("USD", "EUR", 10, 8.6)]
         [InlineData("IR", "USD", 10, 0)]
-
         //Divide
         [InlineData("CAD", "USD", 11, 8.21)]
         [InlineData("GBP", "CAD", 12, 20.69)]
         [InlineData("EUR", "USD", 15, 17.44)]
+
+        //Not Directed
+        [InlineData("CAD", "EUR", 10, 6.42)]
         public void Convert_Should_Convert_Currencies(
             string from,
             string to,
@@ -38,7 +39,6 @@ namespace CurrencyConvertorTest
             //Assert
             Assert.Equal(expected, actual);
         }
-
 
         [Fact]
         public void ClearConfiguration_Should_Remove_All_Config()
@@ -65,7 +65,6 @@ namespace CurrencyConvertorTest
             //Assert
             sut.Currencies.Should().HaveCount(data.Item2);
         }
-
 
         public static IEnumerable<object[]> Data =>
         new List<object[]>

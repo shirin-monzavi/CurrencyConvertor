@@ -67,19 +67,18 @@ namespace CurrencyConvertor.Converters
         {
             double value;
 
-            if (findRate(fromCurrency, toCurrency, out value))
-                return calculator(amount, value, "*");
+            if (findRate(fromCurrency, toCurrency, out value)) return calculator(amount, value, "*");
 
-            if (findRate(toCurrency, fromCurrency, out value))
-                return calculator(amount, value, "/");
+            if (findRate(toCurrency, fromCurrency, out value)) return calculator(amount, value, "/");
 
             foreach (var currency in currencies)
             {
-                if (currency.Key.Item2 == toCurrency &&
-                    currencies.Any(c => c.Key.Item2 == currency.Key.Item2 && c.Key.Item2 == toCurrency)
-                    )
+                if (currencies.Any(c => c.Key.Item2 == currency.Key.Item2 && c.Key.Item2 == toCurrency))
                 {
-                    var findInDirectRate = findRate(currency.Key.Item1, fromCurrency, out value);
+                    var findInDirectRate = findRate(
+                        currency.Key.Item1, 
+                        fromCurrency, 
+                        out value);
 
                     var newAmount = calculator(amount, value, "/");
 
@@ -89,7 +88,6 @@ namespace CurrencyConvertor.Converters
 
             return 0;
         }
-
 
         public void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates)
         {

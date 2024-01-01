@@ -23,13 +23,13 @@ namespace CurrencyConvertor.Converters
 
             currencies.AddOrUpdate(
                 new Tuple<string, string>("CAD", "GBP"),
-                0.58,
+                0.58D,
                 (k, v) => v
             );
 
             currencies.AddOrUpdate(
                 new Tuple<string, string>("USD", "EUR"),
-                0.86,
+                0.86D,
                 (k, v) => v
             );
         }
@@ -61,12 +61,20 @@ namespace CurrencyConvertor.Converters
 
         public double Convert(string fromCurrency, string toCurrency, double amount)
         {
-            double value;
-            var findRate = currencies.TryGetValue(new Tuple<string, string>(fromCurrency, toCurrency),out value);
+            double value, rate;
+
+            var findRate = currencies.TryGetValue(new Tuple<string, string>(fromCurrency, toCurrency), out value);
 
             if (findRate)
             {
-                return value * amount;
+                return calculator(amount, value, "*", out rate);
+            }
+
+            findRate = currencies.TryGetValue(new Tuple<string, string>(toCurrency, fromCurrency), out value);
+
+            if (findRate)
+            {
+                return calculator(amount, value, "/", out rate);
             }
 
             return 0;
@@ -76,6 +84,34 @@ namespace CurrencyConvertor.Converters
         {
             throw new NotImplementedException();
         }
+        #endregion
+
+        #region Private Method
+
+        private double calculator(double amount, double value, string @operator, out double rate)
+        {
+            if (@operator == "*")
+            {
+                rate = multiply(amount, value);
+
+                return roundRate(rate);
+            }
+
+            rate = divide(amount, value);
+
+            return roundRate(rate);
+        }
+
+        private double roundRate(double rate)
+        {
+            return Math.Round(rate, 2, MidpointRounding.ToEven);
+        }
+
+        private double multiply(double amount, double value) =>
+             amount * value;
+
+        private double divide(double amount, double value) =>
+             amount / value;
         #endregion
 
     }

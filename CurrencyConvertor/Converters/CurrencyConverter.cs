@@ -10,6 +10,10 @@ namespace CurrencyConvertor.Converters
         private static readonly object synclock = new object();
         #endregion
 
+        #region Public Properties
+        public ConcurrentDictionary<Tuple<string, string>, double> Currencies => currencies;
+        #endregion
+
         #region Constructor
         private CurrencyConverter()
         {
@@ -56,7 +60,7 @@ namespace CurrencyConvertor.Converters
 
         public void ClearConfiguration()
         {
-            throw new NotImplementedException();
+            currencies.Clear();
         }
 
         public double Convert(string fromCurrency, string toCurrency, double amount)
@@ -82,7 +86,16 @@ namespace CurrencyConvertor.Converters
 
         public void UpdateConfiguration(IEnumerable<Tuple<string, string, double>> conversionRates)
         {
-            throw new NotImplementedException();
+            foreach (var conversionRate in conversionRates)
+            {
+                currencies.AddOrUpdate(
+                new Tuple<string, string>(
+                    conversionRate.Item1,
+                    conversionRate.Item2),
+                    conversionRate.Item3,
+                    (k, v) => conversionRate.Item3
+                );
+            }
         }
         #endregion
 

@@ -76,7 +76,8 @@ namespace CurrencyConvertor.Converters
             foreach (var currency in currencies)
             {
                 if (currency.Key.Item2 == toCurrency &&
-                    currencies.Any(c => c.Key.Item2 == currency.Key.Item2 && c.Key.Item2 == toCurrency))
+                    currencies.Any(c => c.Key.Item2 == currency.Key.Item2 && c.Key.Item2 == toCurrency)
+                    )
                 {
                     var findInDirectRate = findRate(currency.Key.Item1, fromCurrency, out value);
 
@@ -106,15 +107,12 @@ namespace CurrencyConvertor.Converters
         #endregion
 
         #region Private Method
-
-        private bool findRate(string fromCurrency, string toCurrency, out double value)
-        {
-            return currencies
+        private bool findRate(string fromCurrency, string toCurrency, out double value) =>
+             currencies
                 .TryGetValue(
                     new Tuple<string, string>(fromCurrency, toCurrency),
                     out value
                 );
-        }
 
         private double calculator(double amount, double value, string @operator)
         {
@@ -132,10 +130,8 @@ namespace CurrencyConvertor.Converters
             return roundRate(rate);
         }
 
-        private double roundRate(double rate)
-        {
-            return Math.Round(rate, 2, MidpointRounding.ToEven);
-        }
+        private double roundRate(double rate) =>
+             Math.Round(rate, 2, MidpointRounding.ToEven);
 
         private double multiply(double amount, double value) =>
              amount * value;

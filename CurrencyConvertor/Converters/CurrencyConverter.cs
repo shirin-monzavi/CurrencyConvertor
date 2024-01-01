@@ -67,19 +67,23 @@ namespace CurrencyConvertor.Converters
         {
             double value, rate;
 
-            var findRate = currencies.TryGetValue(new Tuple<string, string>(fromCurrency, toCurrency), out value);
+            var findRate = currencies
+                .TryGetValue(
+                    new Tuple<string, string>(fromCurrency, toCurrency),
+                    out value
+                );
 
             if (findRate)
-            {
                 return calculator(amount, value, "*", out rate);
-            }
 
-            findRate = currencies.TryGetValue(new Tuple<string, string>(toCurrency, fromCurrency), out value);
+            findRate = currencies
+                .TryGetValue(
+                    new Tuple<string, string>(toCurrency, fromCurrency),
+                    out value
+                );
 
             if (findRate)
-            {
                 return calculator(amount, value, "/", out rate);
-            }
 
             return 0;
         }

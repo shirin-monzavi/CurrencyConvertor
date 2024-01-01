@@ -24,7 +24,7 @@ namespace CurrencyConvertorTest
         [InlineData("CAD", "USD", 11, 8.21)]
         [InlineData("GBP", "CAD", 12, 20.69)]
         [InlineData("EUR", "USD", 15, 17.44)]
-        public void Convert_Should_Mupliply_Currency_When_The_First_One_Is_Greater_Than_The_Second(
+        public void Convert_Should_Convert_Currencies(
             string from,
             string to,
             double amount,
